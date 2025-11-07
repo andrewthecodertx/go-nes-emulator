@@ -4,7 +4,7 @@ package nes
 import (
 	"fmt"
 
-	"github.com/andrewthecodertx/go-65c02-emulator/pkg/mos6502"
+	"github.com/andrewthecodertx/go-6502-emulator/pkg/mos6502"
 	"github.com/andrewthecodertx/nes-emulator/pkg/bus"
 	"github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
 	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
@@ -12,11 +12,11 @@ import (
 
 // NES represents the complete NES emulator system
 type NES struct {
-	cpu       *mos6502.CPU           // 6502 CPU
-	bus       *bus.NESBus            // System bus
-	ppu       *ppu.PPU               // Picture Processing Unit
-	cartridge *cartridge.Cartridge   // Loaded cartridge
-	cycles    uint64                 // Total CPU cycles executed
+	cpu       *mos6502.CPU         // 6502 CPU
+	bus       *bus.NESBus          // System bus
+	ppu       *ppu.PPU             // Picture Processing Unit
+	cartridge *cartridge.Cartridge // Loaded cartridge
+	cycles    uint64               // Total CPU cycles executed
 }
 
 // New creates a new NES emulator from a ROM file

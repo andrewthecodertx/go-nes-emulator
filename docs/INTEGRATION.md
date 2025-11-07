@@ -63,10 +63,10 @@ module github.com/andrewthecodertx/nes-emulator
 
 go 1.25
 
-require github.com/andrewthecodertx/go-65c02-emulator v0.0.0
+require github.com/andrewthecodertx/go-6502-emulator v0.0.0
 
 // Local development: use local copy
-replace github.com/andrewthecodertx/go-65c02-emulator => /mnt/internalssd/Projects/go-6502
+replace github.com/andrewthecodertx/go-6502-emulator => /mnt/internalssd/Projects/go-6502
 ```
 
 ### Future Setup (Production)
@@ -87,7 +87,7 @@ module github.com/andrewthecodertx/nes-emulator
 
 go 1.25
 
-require github.com/andrewthecodertx/go-65c02-emulator v0.1.0
+require github.com/andrewthecodertx/go-6502-emulator v0.1.0
 
 // Remove the replace directive
 ```
@@ -122,7 +122,7 @@ This allows the 6502 CPU to access:
 In `pkg/nes/nes.go`:
 
 ```go
-import "github.com/andrewthecodertx/go-65c02-emulator/pkg/mos6502"
+import "github.com/andrewthecodertx/go-6502-emulator/pkg/mos6502"
 
 // Create CPU with NES bus
 cpu := mos6502.NewCPU(nesbus)
@@ -284,7 +284,7 @@ If you see errors about the go-6502-emulator module:
 Make sure all imports use the correct module name:
 
 ```go
-import "github.com/andrewthecodertx/go-65c02-emulator/pkg/mos6502"
+import "github.com/andrewthecodertx/go-6502-emulator/pkg/mos6502"
 ```
 
 Not:

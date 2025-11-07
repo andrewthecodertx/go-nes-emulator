@@ -2,7 +2,7 @@
 package bus
 
 import (
-	"github.com/andrewthecodertx/go-65c02-emulator/pkg/core"
+	"github.com/andrewthecodertx/go-6502-emulator/pkg/core"
 	"github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
 	"github.com/andrewthecodertx/nes-emulator/pkg/controller"
 	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
@@ -11,13 +11,14 @@ import (
 // NESBus implements the core.Bus interface for the NES system
 //
 // CPU Memory Map:
-//   $0000-$07FF: 2KB internal RAM
-//   $0800-$1FFF: Mirrors of $0000-$07FF
-//   $2000-$2007: PPU registers
-//   $2008-$3FFF: Mirrors of $2000-$2007
-//   $4000-$4017: APU and I/O registers
-//   $4018-$401F: APU and I/O functionality (rarely used)
-//   $4020-$FFFF: Cartridge space (PRG-ROM, PRG-RAM, mapper registers)
+//
+//	$0000-$07FF: 2KB internal RAM
+//	$0800-$1FFF: Mirrors of $0000-$07FF
+//	$2000-$2007: PPU registers
+//	$2008-$3FFF: Mirrors of $2000-$2007
+//	$4000-$4017: APU and I/O registers
+//	$4018-$401F: APU and I/O functionality (rarely used)
+//	$4020-$FFFF: Cartridge space (PRG-ROM, PRG-RAM, mapper registers)
 type NESBus struct {
 	// 2KB CPU RAM (mirrored to fill $0000-$1FFF)
 	cpuRAM [2048]uint8
