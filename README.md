@@ -7,7 +7,7 @@ the [go-6502-emulator](https://github.com/andrewthecodertx/go-6502-emulator) lib
 
 ### Currently Implemented
 
-- **6502 CPU**: Full cycle-accurate NMOS 6502 emulation via go-6502-emulator
+- **6502 CPU**: Full cycle-accurate MOS 6502 emulation via go-6502-emulator
 - **PPU (Picture Processing Unit)**:
   - Complete PPU register interface ($2000-$2007)
   - Nametable memory with mirroring support (horizontal, vertical,
@@ -55,13 +55,6 @@ the [go-6502-emulator](https://github.com/andrewthecodertx/go-6502-emulator) lib
   - OAM DMA support
 - **System Bus**: Connects CPU, PPU, RAM, cartridge, and controllers
 
-### In Progress / TODO
-
-- [ ] APU (Audio Processing Unit) for sound generation
-- [ ] Save state support
-- [ ] Debugger interface with memory viewer
-- [ ] Additional mappers (Mapper 5, 9, 10, 11, etc.)
-
 ## Architecture
 
 ```
@@ -103,7 +96,7 @@ cd cmd/sdl-display
 go build -o nes-sdl
 
 # Run with a ROM file
-./nes-sdl ../../roms/donkeykong.nes
+./nes-sdl ../../roms/nestest.nes
 ```
 
 ### Controls
@@ -395,6 +388,7 @@ documentation (primary reference)
 The PPU implementation in this emulator is based on extensive documentation from
 the NES development community:
 
+- The [NESDev Wiki](https://www.nesdev.org/) community's excellent documentation
 - [PPU Reference](https://www.nesdev.org/wiki/PPU) - Complete PPU technical
 details
 - [PPU Rendering](https://www.nesdev.org/wiki/PPU_rendering) - Cycle-by-cycle
@@ -429,34 +423,6 @@ tile format
 ## License
 
 This project is open source. See LICENSE file for details.
-
-## Acknowledgments
-
-This emulator was developed using:
-
-- The [NESDev Wiki](https://www.nesdev.org/) community's excellent documentation
-- Reference from the PHP-based NES emulator at `/home/andrew/Projects/NES`
-- The go-6502-emulator library for accurate CPU emulation
-
-### Claude Code Contributions
-
-This project was significantly enhanced with assistance from
-**[Claude Code](https://claude.ai/code)** (Anthropic), which helped with:
-
-- **Code Generation**: Implementation of mappers 1-4 and 7, PPU rendering
-pipeline, sprite evaluation
-- **Documentation**: Generated comprehensive inline comments throughout the
-codebase explaining NES hardware behavior
-- **Technical Writing**: Created detailed documentation files (RENDERING.md,
-SPRITE-RENDERING.md, CLAUDE.md)
-- **Debugging**: Identified and fixed critical bugs including:
-  - CPU/PPU timing synchronization (Step() function)
-  - CHR-ROM address calculation bug in background tile fetching
-  - Pattern table address bit-shift error
-- **Architecture**: Designed the modular mapper system and controller interface
-
-The [CLAUDE.md](CLAUDE.md) file provides guidance for future Claude Code
-sessions working with this codebase.
 
 ## Contributing
 
