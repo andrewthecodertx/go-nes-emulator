@@ -22,7 +22,7 @@
 //   - $3F20-$3FFF: Mirrors of $3F00-$3F1F
 package ppu
 
-import "github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
+import "github.com/andrewthecodertx/go-nes-emulator/pkg/cartridge"
 
 // Mirroring modes for nametables
 const (
@@ -79,13 +79,13 @@ type PPU struct {
 	// PPU Registers (CPU-visible at $2000-$2007)
 	// ========================================================================
 
-	control  PPUControl  // PPUCTRL ($2000) - Control Register
-	mask     PPUMask     // PPUMASK ($2001) - Mask Register
-	status   PPUStatus   // PPUSTATUS ($2002) - Status Register
-	oamData  uint8       // OAMDATA ($2004) - OAM Data Port
+	control   PPUControl // PPUCTRL ($2000) - Control Register
+	mask      PPUMask    // PPUMASK ($2001) - Mask Register
+	status    PPUStatus  // PPUSTATUS ($2002) - Status Register
+	oamData   uint8      // OAMDATA ($2004) - OAM Data Port
 	ppuScroll uint8      // PPUSCROLL ($2005) - Scroll Position Register (write x2)
-	ppuAddr  uint8       // PPUADDR ($2006) - PPU Address Register (write x2)
-	ppuData  uint8       // PPUDATA ($2007) - PPU Data Port
+	ppuAddr   uint8      // PPUADDR ($2006) - PPU Address Register (write x2)
+	ppuData   uint8      // PPUDATA ($2007) - PPU Data Port
 
 	// ========================================================================
 	// Internal Registers (Loopy Registers)

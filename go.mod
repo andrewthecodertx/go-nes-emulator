@@ -1,9 +1,7 @@
-module github.com/andrewthecodertx/nes-emulator
+module github.com/andrewthecodertx/go-nes-emulator
 
 go 1.25.3
 
-require github.com/andrewthecodertx/go-6502-emulator v0.0.0
+require github.com/andrewthecodertx/go-6502-emulator v0.1.0
 
-require github.com/veandco/go-sdl2 v0.4.40 // indirect
-
-replace github.com/andrewthecodertx/go-6502-emulator => /mnt/internalssd/Projects/go-6502
+require github.com/veandco/go-sdl2 v0.4.40

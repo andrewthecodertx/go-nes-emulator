@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/andrewthecodertx/nes-emulator/pkg/nes"
-	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/nes"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/ppu"
 )
 
 func main() {

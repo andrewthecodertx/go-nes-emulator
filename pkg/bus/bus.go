@@ -3,9 +3,9 @@ package bus
 
 import (
 	"github.com/andrewthecodertx/go-6502-emulator/pkg/core"
-	"github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
-	"github.com/andrewthecodertx/nes-emulator/pkg/controller"
-	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/cartridge"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/controller"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/ppu"
 )
 
 // NESBus implements the core.Bus interface for the NES system

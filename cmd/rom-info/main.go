@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/cartridge"
 )
 
 func main() {

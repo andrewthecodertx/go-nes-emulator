@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/andrewthecodertx/go-6502-emulator/pkg/mos6502"
-	"github.com/andrewthecodertx/nes-emulator/pkg/bus"
-	"github.com/andrewthecodertx/nes-emulator/pkg/cartridge"
-	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/bus"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/cartridge"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/ppu"
 )
 
 // NES represents the complete NES emulator system

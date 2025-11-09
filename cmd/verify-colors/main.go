@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/andrewthecodertx/nes-emulator/pkg/ppu"
+	"github.com/andrewthecodertx/go-nes-emulator/pkg/ppu"
 )
 
 func main() {
