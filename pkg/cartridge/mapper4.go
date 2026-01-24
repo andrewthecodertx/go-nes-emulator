@@ -114,22 +114,18 @@ func (m *Mapper4) ReadPRG(addr uint16) uint8 {
 		// $8000-$9FFF
 		var bank uint8
 		if m.prgMode == 0 {
-			bank = m.registers[6] // R6: swappable
+			bank = m.registers[6] & (m.prgBanks - 1) // R6: swappable, masked
 		} else {
 			bank = m.prgBanks - 2 // Fixed to second-last bank
 		}
 		offset := uint32(bank)*0x2000 + uint32(addr-0x8000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 
 	case addr >= 0xA000 && addr < 0xC000:
 		// $A000-$BFFF: R7 (always swappable)
-		bank := m.registers[7]
+		bank := m.registers[7] & (m.prgBanks - 1)
 		offset := uint32(bank)*0x2000 + uint32(addr-0xA000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 
 	case addr >= 0xC000 && addr < 0xE000:
 		// $C000-$DFFF
@@ -137,20 +133,16 @@ func (m *Mapper4) ReadPRG(addr uint16) uint8 {
 		if m.prgMode == 0 {
 			bank = m.prgBanks - 2 // Fixed to second-last bank
 		} else {
-			bank = m.registers[6] // R6: swappable
+			bank = m.registers[6] & (m.prgBanks - 1) // R6: swappable, masked
 		}
 		offset := uint32(bank)*0x2000 + uint32(addr-0xC000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 
 	case addr >= 0xE000:
 		// $E000-$FFFF: Fixed to last bank
 		bank := m.prgBanks - 1
 		offset := uint32(bank)*0x2000 + uint32(addr-0xE000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 	}
 
 	return 0
@@ -276,10 +268,8 @@ func (m *Mapper4) ReadCHR(addr uint16) uint8 {
 		}
 	}
 
-	if int(offset) < len(m.chrMem) {
-		return m.chrMem[offset]
-	}
-	return 0
+	// Wrap offset to CHR memory size
+	return m.chrMem[offset%uint32(len(m.chrMem))]
 }
 
 // WriteCHR writes to CHR-RAM (PPU $0000-$1FFF)
@@ -336,9 +326,8 @@ func (m *Mapper4) WriteCHR(addr uint16, value uint8) {
 		}
 	}
 
-	if int(offset) < len(m.chrMem) {
-		m.chrMem[offset] = value
-	}
+	// Wrap offset to CHR memory size
+	m.chrMem[offset%uint32(len(m.chrMem))] = value
 }
 
 // Scanline is called by PPU on each scanline

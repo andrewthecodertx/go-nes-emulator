@@ -228,10 +228,8 @@ func (m *Mapper1) ReadCHR(addr uint16) uint8 {
 		}
 	}
 
-	if int(offset) < len(m.chrMem) {
-		return m.chrMem[offset]
-	}
-	return 0
+	// Wrap offset to CHR memory size
+	return m.chrMem[offset%uint32(len(m.chrMem))]
 }
 
 // WriteCHR writes to CHR-RAM (PPU $0000-$1FFF)
@@ -261,9 +259,8 @@ func (m *Mapper1) WriteCHR(addr uint16, value uint8) {
 		}
 	}
 
-	if int(offset) < len(m.chrMem) {
-		m.chrMem[offset] = value
-	}
+	// Wrap offset to CHR memory size
+	m.chrMem[offset%uint32(len(m.chrMem))] = value
 }
 
 // Scanline is called by PPU on each scanline
