@@ -34,12 +34,8 @@ type NESBus struct {
 	controller2 *controller.Controller
 
 	// DMA transfer state
-	dmaPage      uint8
-	dmaAddr      uint8 // Cycle counter (0-511 for read/write pairs)
-	dmaData      uint8
-	dmaDummy     bool
-	dmaTransfer  bool
-	dmaByteIndex uint8 // Source byte index (0-255)
+	dmaPage     uint8
+	dmaTransfer bool
 }
 
 // Ensure NESBus implements core.Bus
@@ -96,8 +92,6 @@ func (b *NESBus) Write(addr uint16, data uint8) {
 	case addr == 0x4014:
 		// OAMDMA: DMA transfer of 256 bytes from CPU memory to OAM
 		b.dmaPage = data
-		b.dmaAddr = 0x00
-		b.dmaByteIndex = 0x00
 		b.dmaTransfer = true
 
 	case addr == 0x4016:
@@ -122,31 +116,14 @@ func (b *NESBus) Clock() {
 
 	// Handle DMA transfer if active
 	if b.dmaTransfer {
-		// DMA transfer takes 513 or 514 cycles total:
-		// - Dummy read cycle to align to write cycle
-		// - 256 read cycles + 256 write cycles (alternating)
-		if b.dmaDummy {
-			// Wait for alignment
-			b.dmaDummy = false
-		} else {
-			// Alternate between read and write
-			if b.dmaAddr%2 == 0 {
-				// Read cycle - read from source address
-				addr := uint16(b.dmaPage)<<8 | uint16(b.dmaByteIndex)
-				b.dmaData = b.Read(addr)
-			} else {
-				// Write cycle - write to OAM
-				b.ppu.WriteCPURegister(0x2004, b.dmaData)
-				b.dmaByteIndex++ // Advance to next byte after write
-			}
-
-			b.dmaAddr++
-			if b.dmaByteIndex == 0 && b.dmaAddr > 1 {
-				// Transfer complete (256 bytes transferred)
-				b.dmaTransfer = false
-				b.dmaDummy = true
-			}
+		// DMA transfers 256 bytes from CPU memory page to OAM
+		// Simplified implementation: copy all bytes immediately
+		// (Real hardware takes 513-514 cycles, but this works for most games)
+		for i := 0; i < 256; i++ {
+			addr := uint16(b.dmaPage)<<8 | uint16(i)
+			b.ppu.WriteOAM(uint8(i), b.Read(addr))
 		}
+		b.dmaTransfer = false
 	}
 }
 

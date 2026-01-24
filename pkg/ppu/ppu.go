@@ -305,8 +305,8 @@ func (p *PPU) Clock() {
 		}
 
 		// Notify mapper of scanline for IRQ counting (MMC3)
-		// This is triggered once per scanline during rendering
-		if p.cycle == 260 && p.mask.IsRenderingEnabled() {
+		// Only on visible scanlines (0-239), not pre-render
+		if p.cycle == 260 && p.scanline >= 0 && p.mask.IsRenderingEnabled() {
 			if p.mapper != nil {
 				p.mapper.Scanline()
 			}
@@ -383,6 +383,12 @@ func (p *PPU) IsFrameComplete() bool {
 // ClearFrameComplete resets the frame complete flag
 func (p *PPU) ClearFrameComplete() {
 	p.frameComplete = false
+}
+
+// WriteOAM writes a byte directly to OAM at the specified address
+// Used by DMA transfer
+func (p *PPU) WriteOAM(addr uint8, data uint8) {
+	p.oam[addr] = data
 }
 
 // Reset initializes the PPU to power-on state
@@ -541,7 +547,14 @@ func (p *PPU) mirrorNametableAddress(addr uint16) uint16 {
 	addr = (addr - 0x2000) % 0x1000
 	table := addr / 0x0400
 	offset := addr % 0x0400
-	switch p.mirroringMode {
+
+	// Query mapper for current mirroring mode (some mappers like MMC3 change it dynamically)
+	mirrorMode := p.mirroringMode
+	if p.mapper != nil {
+		mirrorMode = p.mapper.GetMirroring()
+	}
+
+	switch mirrorMode {
 	case MirrorVertical:
 		return addr % 0x0800
 	case MirrorHorizontal:
