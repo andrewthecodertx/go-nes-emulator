@@ -287,3 +287,8 @@ func (m *Mapper1) GetMirroring() uint8 {
 	}
 	return MirrorHorizontal
 }
+
+// IRQState returns false (MMC1 has no IRQ support)
+func (m *Mapper1) IRQState() bool {
+	return false
+}

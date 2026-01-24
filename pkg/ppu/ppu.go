@@ -48,10 +48,7 @@ const (
 
 // PPU represents the NES Picture Processing Unit (2C02)
 type PPU struct {
-	// ========================================================================
 	// Memory Banks
-	// ========================================================================
-
 	// Nametable RAM (2KB internal)
 	// The NES has 2KB of internal VRAM for nametables. The full 4KB nametable
 	// space ($2000-$2FFF) is mapped to this 2KB using mirroring modes.
@@ -75,10 +72,7 @@ type PPU struct {
 	// Points to current position in OAM for CPU read/write
 	oamAddress uint8
 
-	// ========================================================================
 	// PPU Registers (CPU-visible at $2000-$2007)
-	// ========================================================================
-
 	control   PPUControl // PPUCTRL ($2000) - Control Register
 	mask      PPUMask    // PPUMASK ($2001) - Mask Register
 	status    PPUStatus  // PPUSTATUS ($2002) - Status Register
@@ -87,10 +81,7 @@ type PPU struct {
 	ppuAddr   uint8      // PPUADDR ($2006) - PPU Address Register (write x2)
 	ppuData   uint8      // PPUDATA ($2007) - PPU Data Port
 
-	// ========================================================================
 	// Internal Registers (Loopy Registers)
-	// ========================================================================
-
 	// VRAM Address Register (current address the PPU will read/write)
 	// Also known as "v" in Loopy's documentation
 	vramAddress LoopyRegister
@@ -105,13 +96,8 @@ type PPU struct {
 	// Write latch/toggle (first or second write to $2005/$2006)
 	writeLatch bool
 
-	// Internal read buffer for PPUDATA reads
 	// Reads from PPUDATA are buffered (delayed by one read)
 	readBuffer uint8
-
-	// ========================================================================
-	// Rendering State
-	// ========================================================================
 
 	// Current scanline (0-261)
 	scanline int16
@@ -128,10 +114,7 @@ type PPU struct {
 	// Frame complete flag
 	frameComplete bool
 
-	// ========================================================================
 	// Background Rendering State
-	// ========================================================================
-
 	// Next background tile ID from nametable
 	bgNextTileID uint8
 
@@ -155,10 +138,7 @@ type PPU struct {
 	bgShifterAttribLo uint16
 	bgShifterAttribHi uint16
 
-	// ========================================================================
 	// Sprite Rendering State
-	// ========================================================================
-
 	// Secondary OAM - holds sprites for current scanline (8 sprites max)
 	// During sprite evaluation, the PPU scans primary OAM and copies
 	// sprites that are visible on the next scanline to secondary OAM
@@ -180,20 +160,14 @@ type PPU struct {
 	// Sprite X positions for current scanline
 	spritePositions [8]uint8
 
-	// ========================================================================
 	// Cartridge Interface
-	// ========================================================================
-
 	// Cartridge mapper for CHR-ROM/CHR-RAM access
 	mapper cartridge.Mapper
 
 	// Nametable mirroring mode
 	mirroringMode uint8
 
-	// ========================================================================
 	// Output
-	// ========================================================================
-
 	// Frame buffer (256x240 pixels, each pixel is a palette index 0-63)
 	frameBuffer [ScreenWidth * ScreenHeight]uint8
 
@@ -230,16 +204,12 @@ func (p *PPU) SetMirroring(mode uint8) {
 // Clock advances the PPU by one cycle
 // The PPU runs at 3x the CPU speed, so this should be called 3 times per CPU cycle
 func (p *PPU) Clock() {
-	// ====================================================================
 	// Pixel Rendering - happens BEFORE shifter updates and fetching
-	// ====================================================================
 	if p.scanline >= 0 && p.scanline < 240 && p.cycle >= 1 && p.cycle <= 256 {
 		p.renderPixel()
 	}
 
-	// ====================================================================
 	// Pre-render and Visible Scanlines (-1, 0-239)
-	// ====================================================================
 	if p.scanline >= -1 && p.scanline < 240 {
 
 		// Clear flags at start of pre-render scanline
@@ -334,6 +304,14 @@ func (p *PPU) Clock() {
 			}
 		}
 
+		// Notify mapper of scanline for IRQ counting (MMC3)
+		// This is triggered once per scanline during rendering
+		if p.cycle == 260 && p.mask.IsRenderingEnabled() {
+			if p.mapper != nil {
+				p.mapper.Scanline()
+			}
+		}
+
 		// Superfluous nametable fetches at end of scanline
 		if p.cycle == 338 || p.cycle == 340 {
 			p.bgNextTileID = p.ppuRead(0x2000 | (p.vramAddress.Get() & 0x0FFF))
@@ -347,14 +325,10 @@ func (p *PPU) Clock() {
 		}
 	}
 
-	// ====================================================================
 	// Post-render Scanline (240)
-	// ====================================================================
 	// Idle - PPU does nothing
 
-	// ====================================================================
 	// VBlank Scanlines (241-260)
-	// ====================================================================
 	if p.scanline == 241 && p.cycle == 1 {
 		// Set VBlank flag
 		p.status.SetVBlank(true)
@@ -365,9 +339,7 @@ func (p *PPU) Clock() {
 		}
 	}
 
-	// ====================================================================
 	// Advance Timing
-	// ====================================================================
 	p.cycle++
 
 	// End of scanline
@@ -424,14 +396,10 @@ func (p *PPU) Reset() {
 	p.tempVRAMAddress.Set(0)
 	p.fineX = 0
 	p.readBuffer = 0
-	p.scanline = 0
+	p.scanline = -1 // Start at pre-render scanline
 	p.cycle = 0
 	p.nmiOutput = false
 }
-
-// ========================================================================
-// CPU Register Interface ($2000-$2007)
-// ========================================================================
 
 // WriteCPURegister handles writes from the CPU to PPU registers ($2000-$2007)
 func (p *PPU) WriteCPURegister(addr uint16, value uint8) {
@@ -519,10 +487,7 @@ func (p *PPU) ReadCPURegister(addr uint16) uint8 {
 	return value
 }
 
-// ========================================================================
 // Internal PPU Memory Access
-// ========================================================================
-
 // ppuRead reads from PPU memory space ($0000-$3FFF)
 func (p *PPU) ppuRead(addr uint16) uint8 {
 	addr &= 0x3FFF // 14-bit address space

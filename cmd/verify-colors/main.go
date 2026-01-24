@@ -8,7 +8,6 @@ import (
 
 func main() {
 	fmt.Println("Verifying Hardware Palette Colors")
-	fmt.Println("==================================")
 	fmt.Println()
 
 	// Check key palette indices from Donkey Kong

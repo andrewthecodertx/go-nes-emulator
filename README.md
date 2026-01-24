@@ -11,11 +11,11 @@ the [go-6502-emulator](https://github.com/andrewthecodertx/go-6502-emulator) lib
 - **PPU (Picture Processing Unit)**:
   - Complete PPU register interface ($2000-$2007)
   - Nametable memory with mirroring support (horizontal, vertical,
-  single-screen, four-screen)
+    single-screen, four-screen)
   - Palette RAM with 64-color hardware palette
   - OAM (Object Attribute Memory) for sprites
   - Internal scrolling registers (Loopy registers) with hardware-accurate scroll
-  operations
+    operations
   - VBlank NMI generation
   - **Cycle-accurate background rendering** (fully functional!)
     - 8-cycle tile fetching pipeline per tile
@@ -23,12 +23,10 @@ the [go-6502-emulator](https://github.com/andrewthecodertx/go-6502-emulator) lib
     - Proper scrolling with coarse/fine X/Y
     - Attribute table support for palette selection
     - Pre-render scanline with vertical scroll restoration
-    - See [RENDERING.md](RENDERING.md) for implementation details
   - **Sprite rendering** with proper priority and transparency
     - OAM evaluation (8 sprites per scanline limit)
     - Sprite 0 hit detection
     - 8x8 and 8x16 sprite modes
-    - See [SPRITE-RENDERING.md](SPRITE-RENDERING.md) for details
 - **Cartridge Support**:
   - iNES ROM format (.nes files)
   - **6 mappers implemented** (~72% of NES games):
@@ -237,9 +235,9 @@ specified in the NES hardware.
 - 256 bytes of OAM for 64 sprites (8 sprites per scanline limit)
 - 32 bytes of palette RAM
 - Hardware-accurate scrolling via Loopy registers (vramAddress, tempVRAMAddress,
-fineX)
+  fineX)
 - Configurable nametable mirroring (horizontal, vertical, single-screen,
-four-screen)
+  four-screen)
 - Sprite 0 hit detection
 - 8x8 and 8x16 sprite modes
 
@@ -253,9 +251,9 @@ four-screen)
 **Registers (CPU-visible at $2000-$2007):**
 
 - `$2000`: PPUCTRL - PPU control flags (NMI enable, sprite size, pattern table
-select, etc.)
+  select, etc.)
 - `$2001`: PPUMASK - Rendering control (show background, show sprites, emphasis
-bits)
+  bits)
 - `$2002`: PPUSTATUS - PPU status (VBlank, Sprite0 hit, sprite overflow)
 - `$2003`: OAMADDR - OAM address
 - `$2004`: OAMDATA - OAM data port
@@ -379,7 +377,7 @@ func (m *Mapper1) GetMirroring() uint8 { /* ... */ }
 ### NES Documentation
 
 - [NESDev Wiki](https://www.nesdev.org/wiki/Nesdev_Wiki) - Comprehensive NES
-documentation (primary reference)
+  documentation (primary reference)
 - [6502 CPU Reference](http://www.6502.org/) - 6502 processor documentation
 - [iNES Format](https://www.nesdev.org/wiki/INES) - ROM format specification
 
@@ -390,20 +388,20 @@ the NES development community:
 
 - The [NESDev Wiki](https://www.nesdev.org/) community's excellent documentation
 - [PPU Reference](https://www.nesdev.org/wiki/PPU) - Complete PPU technical
-details
+  details
 - [PPU Rendering](https://www.nesdev.org/wiki/PPU_rendering) - Cycle-by-cycle
-rendering timing
+  rendering timing
 - [PPU Scrolling](https://www.nesdev.org/wiki/PPU_scrolling) - Loopy's
-scrolling documentation
+  scrolling documentation
 - [PPU Registers](https://www.nesdev.org/wiki/PPU_registers) - Register behavior
-and side effects
+  and side effects
 - [PPU OAM](https://www.nesdev.org/wiki/PPU_OAM) - Sprite memory organization
 - [PPU Palettes](https://www.nesdev.org/wiki/PPU_palettes) - Color palette
-system
+  system
 - [PPU Nametables](https://www.nesdev.org/wiki/PPU_nametables) - Nametable
-addressing and mirroring
+  addressing and mirroring
 - [PPU Pattern Tables](https://www.nesdev.org/wiki/PPU_pattern_tables) - CHR-ROM
-tile format
+  tile format
 
 ### Mappers
 
@@ -418,7 +416,7 @@ tile format
 ## Dependencies
 
 - [go-6502-emulator](https://github.com/andrewthecodertx/go-6502-emulator) -
-6502 CPU emulation
+  6502 CPU emulation
 
 ## License
 

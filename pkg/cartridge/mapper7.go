@@ -109,3 +109,8 @@ func (m *Mapper7) Scanline() {
 func (m *Mapper7) GetMirroring() uint8 {
 	return m.mirroring
 }
+
+// IRQState returns false (AxROM has no IRQ support)
+func (m *Mapper7) IRQState() bool {
+	return false
+}

@@ -76,6 +76,11 @@ func (n *NES) Step() uint8 {
 		n.cpu.NMIPending = true
 	}
 
+	// Check for IRQ from mapper (e.g., MMC3 scanline counter)
+	if n.cartridge.GetMapper().IRQState() {
+		n.cpu.IRQPending = true
+	}
+
 	n.cycles++
 	return 1
 }

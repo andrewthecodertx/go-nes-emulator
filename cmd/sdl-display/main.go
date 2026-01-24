@@ -68,7 +68,7 @@ func main() {
 	defer texture.Destroy()
 
 	// Load NES ROM
-	fmt.Printf("\n=== Loading ROM ===\n")
+	fmt.Printf("\nLoading ROM\n")
 	fmt.Printf("File: %s\n", romPath)
 	emulator, err := nes.New(romPath)
 	if err != nil {
@@ -97,10 +97,9 @@ func main() {
 	ppuUnit := emulator.GetPPU()
 	ctrl := emulator.GetBus().GetController(0)
 
-	fmt.Println("\n=== NES Emulator Ready ===")
+	fmt.Println("\nEmulator Ready")
 	fmt.Println("System: ESC=quit | P=pause | SPACE=step | R=reset | F=force render | D=debug")
 	fmt.Println("Game:   Arrows=D-pad | Z=B | X=A | Enter=Start | RShift=Select")
-	fmt.Println("==========================")
 
 	running := true
 	paused := false

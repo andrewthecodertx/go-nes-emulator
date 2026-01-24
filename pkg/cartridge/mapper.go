@@ -29,4 +29,8 @@ type Mapper interface {
 
 	// GetMirroring returns the current nametable mirroring mode
 	GetMirroring() uint8
+
+	// IRQState returns true if an IRQ is pending and clears the flag
+	// Most mappers return false; MMC3 uses this for scanline-based IRQs
+	IRQState() bool
 }

@@ -364,13 +364,11 @@ func (m *Mapper4) GetMirroring() uint8 {
 	return m.mirroring
 }
 
-// IRQPending returns true if an IRQ is pending
-// The emulator should check this and trigger a CPU IRQ
-func (m *Mapper4) IRQPending() bool {
-	return m.irqPending
-}
-
-// ClearIRQ clears the IRQ pending flag
-func (m *Mapper4) ClearIRQ() {
-	m.irqPending = false
+// IRQState returns true if an IRQ is pending and clears the flag
+func (m *Mapper4) IRQState() bool {
+	if m.irqPending {
+		m.irqPending = false
+		return true
+	}
+	return false
 }

@@ -17,7 +17,7 @@ func main() {
 	romPath := os.Args[1]
 
 	// Load ROM
-	fmt.Printf("=== Inspecting PPU State: %s ===\n\n", romPath)
+	fmt.Printf("Inspecting PPU State: %s\n\n", romPath)
 	emulator, err := nes.New(romPath)
 	if err != nil {
 		fmt.Printf("Failed to load ROM: %v\n", err)
@@ -39,7 +39,7 @@ func main() {
 
 	frameBuffer := emulator.GetFrameBuffer()
 
-	fmt.Println("\n=== Frame Buffer Analysis ===")
+	fmt.Println("\nFrame Buffer")
 
 	// Sample different parts of the screen
 	regions := []struct {
@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Check if we have the pattern table data in CHR-ROM
-	fmt.Println("\n\n=== CHR-ROM Check ===")
+	fmt.Println("\n\nCHR-ROM")
 	cart := emulator.GetCartridge()
 	mapper := cart.GetMapper()
 
@@ -88,12 +88,12 @@ func main() {
 	fmt.Println()
 
 	// Check nametable
-	fmt.Println("\n=== Nametable Check ===")
+	fmt.Println("\nNametable")
 	fmt.Println("Reading nametable directly from PPU memory...")
 	// We need to add a method to read nametable
 	// For now, show what we know
 
-	fmt.Println("\n=== Palette RAM Check ===")
+	fmt.Println("\nPalette RAM")
 	// We need to expose palette RAM reading
 	// Try to infer from frame buffer colors
 
@@ -125,13 +125,13 @@ func main() {
 	}
 
 	// Check for specific problem patterns
-	fmt.Println("\n=== Problem Detection ===")
+	fmt.Println("\nProblem Detection")
 
 	// Check if all one color
 	if len(colorUsage) == 1 {
-		fmt.Println("⚠️  Entire screen is one color - rendering likely disabled")
+		fmt.Println("Entire screen is one color - rendering likely disabled")
 	} else if len(colorUsage) < 3 {
-		fmt.Println("⚠️  Very few colors - partial rendering or solid background")
+		fmt.Println("Very few colors - partial rendering or solid background")
 	}
 
 	// Check for repeated patterns that might indicate tile corruption
@@ -156,6 +156,6 @@ func main() {
 		fmt.Printf("Found %d different tile patterns - looks diverse\n", len(patternCounts))
 	}
 
-	fmt.Println("\n=== Inspection Complete ===")
+	fmt.Println("\nInspection Complete")
 	fmt.Println("\nTo see the actual display, run: ./nes-sdl", romPath)
 }

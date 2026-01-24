@@ -99,3 +99,8 @@ func (m *Mapper0) Scanline() {
 func (m *Mapper0) GetMirroring() uint8 {
 	return m.mirroring
 }
+
+// IRQState returns false (NROM has no IRQ support)
+func (m *Mapper0) IRQState() bool {
+	return false
+}

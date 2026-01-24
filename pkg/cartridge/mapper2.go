@@ -103,3 +103,8 @@ func (m *Mapper2) Scanline() {
 func (m *Mapper2) GetMirroring() uint8 {
 	return m.mirroring
 }
+
+// IRQState returns false (UxROM has no IRQ support)
+func (m *Mapper2) IRQState() bool {
+	return false
+}
