@@ -53,11 +53,11 @@ func (c *Controller) IsPressed(button Button) bool {
 // Write handles writes to controller register ($4016)
 // Writing 1 then 0 latches the button states for reading
 func (c *Controller) Write(value uint8) {
-	wasStrobe := c.strobe
 	c.strobe = (value & 0x01) != 0
 
-	// On falling edge of strobe (1 -> 0), reset index
-	if wasStrobe && !c.strobe {
+	// When strobe is high, continuously reset index to 0
+	// This causes reads to always return button A while strobe is high
+	if c.strobe {
 		c.index = 0
 	}
 }

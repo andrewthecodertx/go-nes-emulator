@@ -46,23 +46,24 @@ func NewMapper2(prgROM, chrROM []uint8, mirroring uint8) *Mapper2 {
 	return m
 }
 
-// ReadPRG reads from PRG-ROM (CPU $8000-$FFFF)
+// ReadPRG reads from PRG-ROM (CPU $6000-$FFFF)
 func (m *Mapper2) ReadPRG(addr uint16) uint8 {
 	switch {
+	case addr >= 0x6000 && addr < 0x8000:
+		// $6000-$7FFF: Open bus (no PRG-RAM on standard UxROM)
+		return 0
+
 	case addr >= 0x8000 && addr < 0xC000:
 		// $8000-$BFFF: Switchable bank
-		offset := uint32(m.prgBank)*0x4000 + uint32(addr-0x8000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		bank := m.prgBank & (m.prgBanks - 1)
+		offset := uint32(bank)*0x4000 + uint32(addr-0x8000)
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 
 	case addr >= 0xC000:
 		// $C000-$FFFF: Fixed to last bank
 		lastBank := m.prgBanks - 1
 		offset := uint32(lastBank)*0x4000 + uint32(addr-0xC000)
-		if int(offset) < len(m.prgROM) {
-			return m.prgROM[offset]
-		}
+		return m.prgROM[offset%uint32(len(m.prgROM))]
 	}
 
 	return 0

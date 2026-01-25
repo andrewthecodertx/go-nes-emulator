@@ -306,7 +306,8 @@ func (p *PPU) Clock() {
 
 		// Notify mapper of scanline for IRQ counting (MMC3)
 		// Only on visible scanlines (0-239), not pre-render
-		if p.cycle == 260 && p.scanline >= 0 && p.mask.IsRenderingEnabled() {
+		// Called at cycle 280 which is during sprite tile fetching
+		if p.cycle == 280 && p.scanline >= 0 && p.mask.IsRenderingEnabled() {
 			if p.mapper != nil {
 				p.mapper.Scanline()
 			}

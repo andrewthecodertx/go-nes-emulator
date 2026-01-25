@@ -62,6 +62,11 @@ func (b *NESBus) Read(addr uint16) uint8 {
 		// PPU registers (mirrored every 8 bytes)
 		return b.ppu.ReadCPURegister(0x2000 + (addr & 0x0007))
 
+	case addr == 0x4015:
+		// APU Status register (stub - APU not implemented)
+		// Return 0 to indicate no sound channels active
+		return 0
+
 	case addr == 0x4016:
 		// Controller 1
 		return b.controller1.Read()
@@ -69,6 +74,10 @@ func (b *NESBus) Read(addr uint16) uint8 {
 	case addr == 0x4017:
 		// Controller 2
 		return b.controller2.Read()
+
+	case addr >= 0x4000 && addr < 0x4020:
+		// Other APU/IO registers - return 0 (open bus)
+		return 0
 
 	case addr >= 0x4020:
 		// Cartridge space

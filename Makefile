@@ -12,10 +12,17 @@ WATCH_GAME = watch-game
 # All binaries
 BINARIES = $(NES_SDL) $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
 
-.PHONY: all clean test nes-sdl tools
+# Release build flags (strip symbols, disable DWARF)
+RELEASE_FLAGS = -ldflags="-s -w"
+
+.PHONY: all clean test nes-sdl tools release
 
 # Default: build everything
 all: $(BINARIES)
+
+# Release build (optimized, smaller binary)
+release:
+	go build $(RELEASE_FLAGS) -o $(NES_SDL) ./cmd/sdl-display
 
 # Main emulator with SDL display
 $(NES_SDL):

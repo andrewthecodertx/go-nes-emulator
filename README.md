@@ -2,35 +2,55 @@
 
 A Nintendo Entertainment System (NES) emulator written in Go.
 
-## Prerequisites
+## Installation
+
+Download the latest release for your platform from the [Releases](https://github.com/andrewthecodertx/go-nes-emulator/releases) page.
+
+**Linux:**
+```bash
+tar -xzf nes-emulator-linux-amd64.tar.gz
+./nes-emulator path/to/game.nes
+```
+
+**macOS:**
+```bash
+tar -xzf nes-emulator-macos-arm64.tar.gz
+./nes-emulator path/to/game.nes
+```
+
+**Arch Linux (AUR):**
+```bash
+yay -S nes-emulator-git
+```
+
+## Building from Source
+
+### Prerequisites
 
 - Go 1.21 or later
 - SDL2 development libraries:
   - Ubuntu/Debian: `sudo apt-get install libsdl2-dev`
+  - Arch Linux: `sudo pacman -S sdl2`
   - macOS: `brew install sdl2`
-  - Windows: Download from [libsdl.org](https://www.libsdl.org/)
 
-## Building
+### Build
 
 ```bash
-# Clone and enter the repository
 git clone https://github.com/andrewthecodertx/go-nes-emulator.git
 cd go-nes-emulator
-
-# Build everything
 make
 ```
 
-Or build manually:
-```bash
-go mod download
-go build -o nes-sdl ./cmd/sdl-display
-```
+## ROMs
+
+This emulator does not include any games. You must provide your own ROM files (`.nes` format).
+
+Due to copyright restrictions, ROMs cannot be distributed with this software. You can find NES ROMs at [Vimm's Lair](https://vimm.net/vault/NES).
 
 ## Running
 
 ```bash
-./nes-sdl path/to/game.nes
+./nes-emulator path/to/game.nes
 ```
 
 ## Controls
