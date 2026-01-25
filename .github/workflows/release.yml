@@ -42,8 +42,7 @@ jobs:
       - name: Package
         run: |
           mkdir -p dist
-          mv nes-sdl dist/nes-emulator
-          cp README.md LICENSE dist/
+          cp nes-emulator README.md LICENSE dist/
           cd dist && tar -czvf ../nes-emulator-${{ matrix.name }}.tar.gz *
 
       - name: Upload artifact

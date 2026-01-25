@@ -1,7 +1,7 @@
 # NES Emulator Makefile
 
 # Output binary names
-NES_SDL = nes-sdl
+NES_EMULATOR = nes-emulator
 ROM_INFO = rom-info
 INSPECT_PPU = inspect-ppu
 ASCII_RENDER = ascii-render
@@ -10,23 +10,23 @@ VERIFY_COLORS = verify-colors
 WATCH_GAME = watch-game
 
 # All binaries
-BINARIES = $(NES_SDL) $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
+BINARIES = $(NES_EMULATOR) $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
 
 # Release build flags (strip symbols, disable DWARF)
 RELEASE_FLAGS = -ldflags="-s -w"
 
-.PHONY: all clean test nes-sdl tools release
+.PHONY: all clean test nes-emulator tools release
 
 # Default: build everything
 all: $(BINARIES)
 
 # Release build (optimized, smaller binary)
 release:
-	go build $(RELEASE_FLAGS) -o $(NES_SDL) ./cmd/sdl-display
+	go build $(RELEASE_FLAGS) -o $(NES_EMULATOR) ./cmd/sdl-display
 
 # Main emulator with SDL display
-$(NES_SDL):
-	go build -o $(NES_SDL) ./cmd/sdl-display
+$(NES_EMULATOR):
+	go build -o $(NES_EMULATOR) ./cmd/sdl-display
 
 
 # Utility tools
@@ -48,7 +48,7 @@ $(VERIFY_COLORS):
 $(WATCH_GAME):
 	go build -o $(WATCH_GAME) ./cmd/watch-game
 
-# Build all tools except nes-sdl
+# Build all tools except nes-emulator
 tools: $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
 
 # Run tests
