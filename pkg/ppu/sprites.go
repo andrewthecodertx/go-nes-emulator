@@ -115,7 +115,7 @@ func (p *PPU) spriteFetching() {
 			}
 		} else {
 			// 8x8 sprites
-			patternAddress = (spritePatternTable << 12) |
+			patternAddress = spritePatternTable |
 				(uint16(tileIndex) << 4) |
 				(spriteRow & 0x07)
 		}

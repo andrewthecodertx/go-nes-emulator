@@ -77,6 +77,16 @@ The emulator supports ~72% of NES games through these mappers:
 - Mapper 4 (MMC3) - Super Mario Bros. 3, Mega Man 3-6
 - Mapper 7 (AxROM) - Battletoads
 
+## Limitations
+
+This emulator is a work in progress. Current limitations include:
+
+- **No audio** - APU (Audio Processing Unit) is not implemented
+- **Single player only** - No support for a second controller
+- **Limited mapper support** - Only 6 of 200+ mappers are implemented; games using unsupported mappers will not load
+- **No save states** - Cannot save or load emulator state
+- **No battery-backed saves** - Games with save functionality (Zelda, Final Fantasy) will not persist saves between sessions
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
