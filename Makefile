@@ -1,6 +1,3 @@
-# NES Emulator Makefile
-
-# Output binary names
 NES_EMULATOR = nes-emulator
 ROM_INFO = rom-info
 INSPECT_PPU = inspect-ppu
@@ -9,27 +6,23 @@ DETAILED_RENDER = detailed-render
 VERIFY_COLORS = verify-colors
 WATCH_GAME = watch-game
 
-# All binaries
+WASM_DIR = cmd/wasm-display
+WASM_BINARY = $(WASM_DIR)/nes.wasm
+
 BINARIES = $(NES_EMULATOR) $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
 
-# Release build flags (strip symbols, disable DWARF)
 RELEASE_FLAGS = -ldflags="-s -w"
 
-.PHONY: all clean test nes-emulator tools release
+.PHONY: all clean test nes-emulator tools release wasm wasm-serve
 
-# Default: build everything
 all: $(BINARIES)
 
-# Release build (optimized, smaller binary)
 release:
 	go build $(RELEASE_FLAGS) -o $(NES_EMULATOR) ./cmd/sdl-display
 
-# Main emulator with SDL display
 $(NES_EMULATOR):
 	go build -o $(NES_EMULATOR) ./cmd/sdl-display
 
-
-# Utility tools
 $(ROM_INFO):
 	go build -o $(ROM_INFO) ./cmd/rom-info
 
@@ -48,21 +41,31 @@ $(VERIFY_COLORS):
 $(WATCH_GAME):
 	go build -o $(WATCH_GAME) ./cmd/watch-game
 
-# Build all tools except nes-emulator
 tools: $(ROM_INFO) $(INSPECT_PPU) $(ASCII_RENDER) $(DETAILED_RENDER) $(VERIFY_COLORS) $(WATCH_GAME)
 
-# Run tests
 test:
 	go test ./...
 
-# Run tests with race detector
 test-race:
 	go test -race ./...
 
-# Download dependencies
 deps:
 	go mod download
 
-# Clean build artifacts
+wasm:
+	GOOS=js GOARCH=wasm go build -o $(WASM_BINARY) ./cmd/wasm-display
+	@GOROOT=$$(go env GOROOT); \
+	if [ -f "$$GOROOT/misc/wasm/wasm_exec.js" ]; then \
+		cp "$$GOROOT/misc/wasm/wasm_exec.js" $(WASM_DIR)/; \
+	elif [ -f "$$GOROOT/lib/wasm/wasm_exec.js" ]; then \
+		cp "$$GOROOT/lib/wasm/wasm_exec.js" $(WASM_DIR)/; \
+	else \
+		echo "Error: wasm_exec.js not found in GOROOT"; exit 1; \
+	fi
+
+wasm-serve: wasm
+	@echo "Starting server at http://localhost:8080"
+	cd $(WASM_DIR) && python3 -m http.server 8080
+
 clean:
-	rm -f $(BINARIES)
+	rm -f $(BINARIES) $(WASM_BINARY) $(WASM_DIR)/wasm_exec.js

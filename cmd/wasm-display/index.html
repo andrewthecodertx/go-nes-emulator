@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NES Emulator</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #000;
+        color: #eee;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      h1 {
+        font-family: "Press Start 2P", cursive;
+        margin: 0 0 20px 0;
+        color: #e94560;
+        font-size: 24px;
+        text-shadow:
+          2px 2px 0 #000,
+          4px 4px 0 #333;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .canvas-container {
+        background: #000;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      #nes-canvas {
+        display: block;
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      button {
+        background: #16213e;
+        color: #eee;
+        border: 2px solid #e94560;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+      button:hover {
+        background: #e94560;
+      }
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      #rom-input {
+        display: none;
+      }
+      .info {
+        background: #16213e;
+        padding: 15px 20px;
+        border-radius: 8px;
+        max-width: 600px;
+        text-align: center;
+      }
+      .info h3 {
+        margin: 0 0 10px 0;
+        color: #e94560;
+      }
+      .key-map {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 5px 20px;
+        text-align: left;
+        font-size: 14px;
+      }
+      .key-map span {
+        color: #0f4c75;
+      }
+      .key-map kbd {
+        background: #0f4c75;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: monospace;
+      }
+      #status {
+        color: #3282b8;
+        font-size: 14px;
+      }
+      .loading {
+        color: #e94560;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>NES Emulator</h1>
+
+    <div class="container">
+      <div class="canvas-container">
+        <canvas
+          id="nes-canvas"
+          width="256"
+          height="240"
+          style="width: 512px; height: 480px"
+        ></canvas>
+      </div>
+
+      <div class="controls">
+        <input type="file" id="rom-input" accept=".nes" />
+        <button id="load-btn">Load ROM</button>
+        <button id="reset-btn" disabled>Reset</button>
+        <button id="pause-btn" disabled>Pause</button>
+      </div>
+
+      <p id="status">Load a ROM file to start</p>
+
+      <div class="info">
+        <h3>Keyboard</h3>
+        <div class="key-map">
+          <div><kbd>Arrows</kbd> or <kbd>WASD</kbd></div>
+          <div>D-Pad</div>
+          <div><kbd>X</kbd> or <kbd>J</kbd></div>
+          <div>A Button</div>
+          <div><kbd>Z</kbd> or <kbd>K</kbd></div>
+          <div>B Button</div>
+          <div><kbd>Enter</kbd></div>
+          <div>Start</div>
+          <div><kbd>Shift</kbd></div>
+          <div>Select</div>
+          <div><kbd>P</kbd></div>
+          <div>Pause</div>
+        </div>
+        <h3 style="margin-top: 15px">Gamepad</h3>
+        <div class="key-map">
+          <div>D-Pad / Left Stick</div>
+          <div>D-Pad</div>
+          <div>A / X</div>
+          <div>A Button</div>
+          <div>B / Y</div>
+          <div>B Button</div>
+          <div>Start</div>
+          <div>Start</div>
+          <div>Select / Share</div>
+          <div>Select</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="wasm_exec.js"></script>
+    <script>
+      const go = new Go();
+      let wasmReady = false;
+      let isPaused = false;
+
+      WebAssembly.instantiateStreaming(fetch("nes.wasm"), go.importObject)
+        .then((result) => {
+          go.run(result.instance);
+          wasmReady = true;
+          document.getElementById("status").textContent =
+            "Ready - Load a ROM file to start";
+        })
+        .catch((err) => {
+          document.getElementById("status").textContent =
+            "Error loading WASM: " + err;
+          document.getElementById("status").classList.add("loading");
+        });
+
+      const romInput = document.getElementById("rom-input");
+      const loadBtn = document.getElementById("load-btn");
+      const resetBtn = document.getElementById("reset-btn");
+      const pauseBtn = document.getElementById("pause-btn");
+      const status = document.getElementById("status");
+
+      loadBtn.addEventListener("click", () => romInput.click());
+
+      romInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file || !wasmReady) return;
+
+        status.textContent = "Loading ROM...";
+        status.classList.add("loading");
+
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+
+        const result = nesLoadROM(uint8Array);
+        status.textContent = result;
+        status.classList.remove("loading");
+
+        if (!result.startsWith("Error")) {
+          resetBtn.disabled = false;
+          pauseBtn.disabled = false;
+          isPaused = false;
+          pauseBtn.textContent = "Pause";
+        }
+      });
+
+      resetBtn.addEventListener("click", () => {
+        if (wasmReady) nesReset();
+      });
+
+      pauseBtn.addEventListener("click", () => {
+        if (!wasmReady) return;
+        if (isPaused) {
+          nesResume();
+          pauseBtn.textContent = "Pause";
+        } else {
+          nesPause();
+          pauseBtn.textContent = "Resume";
+        }
+        isPaused = !isPaused;
+      });
+
+      const keyMap = {
+        ArrowUp: "up",
+        ArrowDown: "down",
+        ArrowLeft: "left",
+        ArrowRight: "right",
+        KeyX: "a",
+        KeyZ: "b",
+        KeyW: "up",
+        KeyS: "down",
+        KeyA: "left",
+        KeyD: "right",
+        KeyJ: "a",
+        KeyK: "b",
+        Enter: "start",
+        ShiftLeft: "select",
+        ShiftRight: "select",
+      };
+
+      document.addEventListener("keydown", (e) => {
+        // Pause toggle
+        if (e.code === "KeyP" && wasmReady) {
+          pauseBtn.click();
+          e.preventDefault();
+          return;
+        }
+
+        const button = keyMap[e.code];
+        if (button && wasmReady) {
+          nesSetButton(button, true);
+          e.preventDefault();
+        }
+      });
+
+      document.addEventListener("keyup", (e) => {
+        const button = keyMap[e.code];
+        if (button && wasmReady) {
+          nesSetButton(button, false);
+          e.preventDefault();
+        }
+      });
+
+      window.addEventListener("keydown", (e) => {
+        if (
+          ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "Space"].includes(
+            e.code,
+          )
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      let gamepadIndex = null;
+      const gamepadState = {
+        a: false,
+        b: false,
+        select: false,
+        start: false,
+        up: false,
+        down: false,
+        left: false,
+        right: false,
+      };
+
+      window.addEventListener("gamepadconnected", (e) => {
+        gamepadIndex = e.gamepad.index;
+        console.log("Gamepad connected:", e.gamepad.id);
+        status.textContent = status.textContent + " | Gamepad connected";
+      });
+
+      window.addEventListener("gamepaddisconnected", (e) => {
+        if (e.gamepad.index === gamepadIndex) {
+          gamepadIndex = null;
+          console.log("Gamepad disconnected");
+        }
+      });
+
+      function pollGamepad() {
+        if (gamepadIndex === null || !wasmReady) {
+          requestAnimationFrame(pollGamepad);
+          return;
+        }
+
+        const gp = navigator.getGamepads()[gamepadIndex];
+        if (!gp) {
+          requestAnimationFrame(pollGamepad);
+          return;
+        }
+
+        const newState = {
+          a: gp.buttons[0]?.pressed || gp.buttons[2]?.pressed, // A/X or X/□
+          b: gp.buttons[1]?.pressed || gp.buttons[3]?.pressed, // B/O or Y/△
+          select: gp.buttons[8]?.pressed, // Select/Share
+          start: gp.buttons[9]?.pressed, // Start/Options
+          up: gp.buttons[12]?.pressed || gp.axes[1] < -0.5, // D-pad or left stick
+          down: gp.buttons[13]?.pressed || gp.axes[1] > 0.5,
+          left: gp.buttons[14]?.pressed || gp.axes[0] < -0.5,
+          right: gp.buttons[15]?.pressed || gp.axes[0] > 0.5,
+        };
+
+        for (const btn of Object.keys(newState)) {
+          if (newState[btn] !== gamepadState[btn]) {
+            gamepadState[btn] = newState[btn];
+            nesSetButton(btn, newState[btn]);
+          }
+        }
+
+        requestAnimationFrame(pollGamepad);
+      }
+
+      pollGamepad();
+    </script>
+  </body>
+</html>

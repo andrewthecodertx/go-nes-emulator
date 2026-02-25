@@ -1,4 +1,3 @@
-# Maintainer: Your Name <your.email@example.com>
 pkgname=nes-emulator-git
 pkgver=r50.b415ee4
 pkgrel=1
