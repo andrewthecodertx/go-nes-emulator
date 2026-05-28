@@ -89,4 +89,8 @@ This emulator is a work in progress. Current limitations include:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT, see [LICENSE](LICENSE).
+
+## Contributing
+
+PRs welcome. Please open an issue first for major changes.
